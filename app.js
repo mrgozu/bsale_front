@@ -1,13 +1,3 @@
-// const carga = async ()=>{
-//     let h1 = document.createElement('h1');
-//     h1.innerText = 'Hola mundo'
-//     h1.id = "Myh1"
-//     h1.className = "Myh1class"
-//     bodyPrincipal.append(h1)
-// }
-// window.onload = carga;
-
-
 //  solicitudes http
 const obtenerDatos = async ()=>{
     try {
@@ -21,7 +11,7 @@ const obtenerDatos = async ()=>{
     }
 
 }
-// pagina 
+// visualizacion de la pagina 
 const body = document.body;
 let card;
 const crearHtml = () =>{
@@ -58,36 +48,35 @@ const crearHtml = () =>{
     body.append(divHome);
 }
 
-
+// eventos (obtener id, btn, etc)
 const eventos = ()=>{
     card  = document.getElementById('cardProducto');
     buscador = document.getElementById('buscador');
     carrito = document.getElementById('carro');
 }
 
-const obtenerProducto =    (producto)=>{
-    if(producto.name!=undefined || producto.name!='' ||producto.name!=null){
-        const divItem = document.createElement('div');
-        divItem.innerHTML = `
+//  Card en que se mostraran los productos, recibe listado de productos
+const mostrarProducto =    (producto)=>{
+        const divCard = document.createElement('div');
+        divCard.innerHTML = `
         <div class='card'>
-        <img src="${producto.url_image||'./assets/image-not-found.png'}" class="card-img-top" alt="...">
+        <img src="${producto.url_image||'./assets/img/image-not-found.png'}" class="card-img-top" alt="...">
         <div class="card-body">
             <h5 class="card-title">${producto.name}</h5>
             <p class="card-text">${producto.discountPrice}</p>
         </div>
         </div>`;
-        divItem.classList.add('col')
-        card.append(divItem);
-    }
+        divCard.classList.add('col')
+        card.append(divCard);
     
 }
-
-const listaProductos = async()=>{
-    const listadoProductos = await obtenerDatos();
+// Muestra todos los productos
+const obtenerListaProductos = async()=>{
+    const productos = await obtenerDatos();
  
-    listadoProductos.forEach((data)=>{
+    productos.forEach((data)=>{
         console.log(data);
-            obtenerProducto(data);
+            mostrarProducto(data);
         
     });
 }
@@ -95,10 +84,8 @@ const listaProductos = async()=>{
 //  construccion html
 const init  = () =>{
     crearHtml();
-    listaProductos();
+    obtenerListaProductos();
     eventos();
-    
-    
     
 }
 
@@ -107,15 +94,6 @@ const init  = () =>{
 
 
 // ejecuciones
-obtenerDatos().then(console.log)
 init();
 
 
-// fetch('https://bsaleserver.herokuapp.com/completa')
-//                                 .then(resp=>resp.json())
-//                                 .then(console.log)
-
-
-// document.addEventListener('DOMcontentLoaded',()=>{
-//      obtenerDatos().then(console.log);
-// })
