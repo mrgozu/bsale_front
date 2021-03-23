@@ -18,14 +18,14 @@ const crearHtml = () =>{
     const html = `   
     <nav class="navbar navbar-expand-lg navbar-light bg-light mb-5">
     <div class="container">
-        <a class="navbar-brand mx-5" href="#">BsaleTest</a>
+        <a class="navbar-brand mx-5" onclick=recargarLista() href="#">BsaleTest</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse w-100" id="navbarSupportedContent">
-                <input class="form-control mr-sm-2 w-75" type="search" placeholder="" aria-label="Search" id='inputBuscador' name='inputBuscador'/>
+                <input class="form-control mr-sm-2 w-75" type="search" placeholder="" onkeyup="eventoBusqueda(event)" aria-label="Search" id='inputBuscador' name='inputBuscador'/>
                 <button class="btn" onclick="eventoBusqueda()" type="button">
                     <i class="fas fa-search"></i>
                 </button>
@@ -74,6 +74,7 @@ const mostrarProducto =    (producto)=>{
 }
 // Muestra todos los productos
 const obtenerListaProductos = async()=>{
+   
     const productos = await obtenerDatos();
     productos.forEach(mostrarProducto);
 }
@@ -82,17 +83,30 @@ const busqueda = async(termino)=>{
     const resultadoBusqueda = await obtenerDatos(`busqueda/${termino}`);
     resultadoBusqueda.forEach(mostrarProducto);
 }
-
-
-
-//eventoBusqueda
-const eventoBusqueda = ()=>{
+//RecargarProductos
+const recargarLista =async ()=>{
     while (card.firstChild) {
         card.removeChild(card.firstChild);
       }
-    console.log(inputBuscador.value);
-    busqueda(inputBuscador.value);
+    const productos = await obtenerDatos();
+    productos.forEach(mostrarProducto);
 }
+
+
+//eventoBusqueda
+const eventoBusqueda = (event)=>{
+    if(event &&event.keyCode!='13'){
+    }else{
+        while (card.firstChild) {
+            card.removeChild(card.firstChild);
+          }
+        busqueda(inputBuscador.value);
+    }
+    
+    
+    
+}
+
 
 
 //  construccion html
