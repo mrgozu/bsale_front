@@ -1,7 +1,7 @@
 //  solicitudes http
-const obtenerDatos = async ()=>{
+const obtenerDatos = async (param = 'completa')=>{
     try {
-        const resp  = await fetch('https://bsaleserver.herokuapp.com/completa');
+        const resp  = await fetch(`https://bsaleserver.herokuapp.com/${param}`);
         if (!resp.ok) throw ('no se pudo cargar los datos');
         
         return  await resp.json();
@@ -25,12 +25,10 @@ const crearHtml = () =>{
         </button>
 
         <div class="collapse navbar-collapse w-100" id="navbarSupportedContent">
-            <form class="form-inline my-2 my-lg-0 w-100" id='buscador'>
-                <input class="form-control mr-sm-2 w-75" type="search" placeholder="Search" aria-label="Search" />
-                <button class="btn " type="button">
+                <input class="form-control mr-sm-2 w-75" type="search" placeholder="" aria-label="Search" id='inputBuscador' name='inputBuscador'/>
+                <button class="btn" onclick="eventoBusqueda()" type="button">
                     <i class="fas fa-search"></i>
                 </button>
-            </form>
         </div>
         <button class="btn " type="button" id='carro'>
         <i class="fas fa-shopping-cart"></i>
@@ -51,19 +49,23 @@ const crearHtml = () =>{
 // eventos (obtener id, btn, etc)
 const eventos = ()=>{
     card  = document.getElementById('cardProducto');
-    buscador = document.getElementById('buscador');
+    // buscador = document.querySelector('#buscador');
+    inputBuscador=document.getElementById('inputBuscador');
     carrito = document.getElementById('carro');
+    
 }
 
 //  Card en que se mostraran los productos, recibe listado de productos
 const mostrarProducto =    (producto)=>{
         const divCard = document.createElement('div');
+        //Se aproxima haciaa el numero superior del precio descuento (para evitar decimales)
+        precioMostrado = Math.ceil(producto.discountPrice); 
         divCard.innerHTML = `
-        <div class='card'>
+        <div class='card h-100'>
         <img src="${producto.url_image||'./assets/img/image-not-found.png'}" class="card-img-top" alt="...">
         <div class="card-body">
             <h5 class="card-title">${producto.name}</h5>
-            <p class="card-text">${producto.discountPrice}</p>
+            <p class="card-text">$${precioMostrado}</p>
         </div>
         </div>`;
         divCard.classList.add('col')
@@ -73,19 +75,33 @@ const mostrarProducto =    (producto)=>{
 // Muestra todos los productos
 const obtenerListaProductos = async()=>{
     const productos = await obtenerDatos();
- 
-    productos.forEach((data)=>{
-        console.log(data);
-            mostrarProducto(data);
-        
-    });
+    productos.forEach(mostrarProducto);
 }
+//Busqueda por nombre
+const busqueda = async(termino)=>{
+    const resultadoBusqueda = await obtenerDatos(`busqueda/${termino}`);
+    resultadoBusqueda.forEach(mostrarProducto);
+}
+
+
+
+//eventoBusqueda
+const eventoBusqueda = ()=>{
+    while (card.firstChild) {
+        card.removeChild(card.firstChild);
+      }
+    console.log(inputBuscador.value);
+    busqueda(inputBuscador.value);
+}
+
 
 //  construccion html
 const init  = () =>{
     crearHtml();
     obtenerListaProductos();
     eventos();
+    
+    
     
 }
 
